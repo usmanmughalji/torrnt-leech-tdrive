@@ -1,30 +1,19 @@
-FROM alpine:edge
 
-# install ca-certificates so that HTTPS works consistently
-RUN apk add --no-cache ca-certificates
 
 
 RUN mkdir ./app
 RUN chmod 777 ./app
 WORKDIR ./app
 
-RUN apt -qq update
-
-ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Asia/Kolkata
 
-RUN apk add --no-cache --update \
-      git \
-      aria2 \
-      wget \
-      curl \
-      busybox \
-      unzip \
-      unrar \
-      tar \
-      python3 \
-      ffmpeg \
-      python3-pip
+RUN apt-get -qq update && \
+    apt-get install -y software-properties-common && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-add-repository non-free && \
+    apt-get -qq update && \
+    apt-get -qq install -y p7zip-full p7zip-rar aria2 curl pv jq ffmpeg locales python3-lxml python3-pip unrar tar git wget busybox unzip && \
+    apt-get purge -y software-properties-common
 
 RUN wget https://rclone.org/install.sh
 RUN bash install.sh
